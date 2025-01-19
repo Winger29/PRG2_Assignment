@@ -1,1 +1,1 @@
-# S10270275_PRG2Assignment
+# PRG2 assignment

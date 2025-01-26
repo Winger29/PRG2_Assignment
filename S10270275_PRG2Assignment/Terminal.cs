@@ -21,14 +21,21 @@ namespace S10270275_PRG2Assignment
         public Dictionary<string, BoardingGate> boardingGates = new Dictionary<string, BoardingGate>();
         public Dictionary<string, double> gateFees = new Dictionary<string, double>();
 
-        public Terminal(string terminalname, string terminalName, Dictionary<string, Airline> airlines, Dictionary<string, Flight> flights, Dictionary<string, BoardingGate> boardingGates, Dictionary<string, double> gateFees)
+        public Terminal(string tname)
         {
-            this.terminalname = terminalname;
-            this.terminalName = terminalName;
-            Airlines = airlines;
-            Flights = flights;
-            this.boardingGates = boardingGates;
-            this.gateFees = gateFees;
+            terminalname = tname;
+        }
+
+        public bool AddAirline(Airline airline)
+        {
+            if (airline == this.Airline)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

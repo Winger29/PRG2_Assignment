@@ -44,6 +44,15 @@ namespace S10270275_PRG2Assignment
             set { status = value; }
         }
 
+        public Flight(string Fnum, string Ori, string Dest, DateTime expectedtime, string status)
+        {
+            FlightNumber = Fnum;
+            Origin = Ori;
+            Destination = Dest; 
+            expectedTime = expectedtime;
+            Status = status;
+        }
 
+        public abstract double CalculateFees();
     }
 }

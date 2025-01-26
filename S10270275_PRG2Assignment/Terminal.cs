@@ -28,14 +28,7 @@ namespace S10270275_PRG2Assignment
 
         public bool AddAirline(Airline airline)
         {
-            if (airline == this.Airline)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+
         }
     }
 }

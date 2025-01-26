@@ -13,7 +13,7 @@ namespace S10270275_PRG2Assignment
         private bool supportsddjb;
         private bool supportslwtt;
 
-        public Flight flight { get; set; }
+        public Flight Flight { get; set; }
 
         public string gateName
         {
@@ -39,9 +39,9 @@ namespace S10270275_PRG2Assignment
             set { supportsLWTT = value; }
         }
 
-        public BoardingGate(Flight flight, string Gname, bool cfft, bool ddjb, bool lwtt)
+        public BoardingGate(Flight fl, string Gname, bool cfft, bool ddjb, bool lwtt)
         {
-            Flight = flight;
+            Flight = fl;
             gateName = Gname;
             supportsCFFT = cfft;
             supportsDDJB = ddjb;

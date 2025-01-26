@@ -28,7 +28,8 @@ namespace S10270275_PRG2Assignment
 
         public Airline(string name, string code)
         {
-
+            Name = name;
+            Code = code;
         }
     }
 }

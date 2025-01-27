@@ -25,10 +25,5 @@ namespace S10270275_PRG2Assignment
         {
             terminalname = tname;
         }
-
-        public bool AddAirline(Airline airline)
-        {
-
-        }
     }
 }

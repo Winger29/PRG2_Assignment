@@ -41,7 +41,7 @@ namespace S10270275_PRG2Assignment
         public string Status
         {
             get { return status; }
-            set { status = value; }
+            set { status = value; } 
         }
 
         public Flight(string Fnum, string Ori, string Dest, DateTime expectedtime, string status)

@@ -8,7 +8,7 @@ namespace S10270275_PRG2Assignment
 {
     class NORMFlight: Flight
     {
-        public NORMFlight(string fnum,string ori,string dest, DateTime expected,string status) : base(fnum,ori,dest,expected,status)
+        public NORMFlight(string fnum,string ori,string dest,string status ,DateTime expected) : base(fnum,ori,dest,expected,status)
         { 
         }
 

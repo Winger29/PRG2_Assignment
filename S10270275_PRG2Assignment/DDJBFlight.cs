@@ -8,13 +8,21 @@ namespace S10270275_PRG2Assignment
 {
     class DDJBFlight:Flight
     {
-        public DDJBFlight(string fnum, string ori, string dest, DateTime expected, string status) : base(fnum, ori, dest, expected, status)
+        private double requestfee;
+
+        public double requestFee
         {
+            get {  return requestfee; } 
+            set {  requestfee = value; }
+        }
+        public DDJBFlight(string fnum, string ori, string dest, DateTime expected,string status ,double rfee) : base(fnum, ori, dest, expected,status)
+        {
+            requestFee = rfee;
         }
 
         public override double CalculateFees()
         {
-            return 300 + 300;
+            return 300 + requestFee;
         }
     }
 }

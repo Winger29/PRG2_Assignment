@@ -31,5 +31,18 @@ namespace S10270275_PRG2Assignment
             Name = name;
             Code = code;
         }
+
+        public bool AddFlight(Flight flight)
+        {
+            if (Flights.ContainsKey(flight.FlightNumber))
+            {
+                return false;
+            }
+            else
+            {
+                Flights.Add(flight.FlightNumber, flight);
+                return true;
+            }
+        }
     }
 }

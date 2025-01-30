@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace S10270275_PRG2Assignment
@@ -24,6 +25,18 @@ namespace S10270275_PRG2Assignment
         public Terminal(string tname)
         {
             terminalname = tname;
+        }
+
+        public bool AddAirline(Airline airline)
+        {
+            Airlines[airline.Code] = airline;
+            return true;
+        }
+
+        public bool AddBoardingGate(BoardingGate boardinggate)
+        {
+            boardingGates[boardinggate.gateName] = boardinggate;
+            return true;
         }
     }
 }

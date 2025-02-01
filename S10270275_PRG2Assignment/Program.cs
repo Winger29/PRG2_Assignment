@@ -49,7 +49,32 @@ void initboarding(Terminal terminal)
 // qn2 
 void initflight(Terminal terminal)
 {
-
+    foreach (string Line in File.ReadLines("flights.csv").Skip(1))
+    {
+        String[] split = Line.Split(",");
+        String[] numsplit = split[0].Split(" ");
+        Airline airline = terminal.Airlines[numsplit[0]];
+        if (split[4] == "DDJB")
+        {
+            Flight ftemp = new DDJBFlight(split[0], split[1], split[2], Convert.ToDateTime(split[3]), "Scheduled", 300);
+            terminal.Flights[split[0]] = ftemp;
+        }
+        else if (split[4] == "CFFT")
+        {
+            Flight ftemp = new CFFTFlight(split[0], split[1], split[2], Convert.ToDateTime(split[3]), "Scheduled", 150);
+            terminal.Flights[split[0]] = ftemp;
+        }
+        else if (split[4] == "LWTT")
+        {
+            Flight ftemp = new LWTTFlight(split[0], split[1], split[2], Convert.ToDateTime(split[3]), "Scheduled", 500);
+            terminal.Flights[split[0]] = ftemp;
+        }
+        else
+        {
+            Flight ftemp = new NORMFlight(split[0], split[1], split[2], "Scheduled", Convert.ToDateTime(split[3]));
+            terminal.Flights[split[0]] = ftemp;
+        }
+    }
 }
 
 
@@ -130,9 +155,7 @@ void assigngate(Terminal terminal)
             else
             {
                 terminal.boardingGates[Boardingnum].Flight = new NORMFlight(Flightnum, terminal.Flights[Flightnum].Origin, terminal.Flights[Flightnum].Destination, statuslist[statusoption - 1], terminal.Flights[Flightnum].expectedTime);
-            }
-            Console.WriteLine("Flight {0} has been assigned to Boarding Gate {1}!", Flightnum, Boardingnum);
-            
+            }            
         }
         else if (option == "N")
         {
@@ -152,8 +175,8 @@ void assigngate(Terminal terminal)
             {
                 terminal.boardingGates[Boardingnum].Flight = new NORMFlight(Flightnum, terminal.Flights[Flightnum].Origin, terminal.Flights[Flightnum].Destination, terminal.Flights[Flightnum].Status, terminal.Flights[Flightnum].expectedTime);
             }
-            Console.WriteLine("Flight {0} has been assigned to Boarding Gate {1}!", Flightnum, Boardingnum);
         }
+        Console.WriteLine("Flight {0} has been assigned to Boarding Gate {1}!", Flightnum, Boardingnum);
     }
 
 }
@@ -180,20 +203,22 @@ void createflight(Terminal terminal)
             if (requestcode == "CFFT")
             {
                 Flight CFFT = new CFFTFlight(flightnum, origin, destination, datetime, "Scheduled", 150);
+                terminal.Flights[flightnum] = CFFT;
             }
             else if (requestcode == "DDJBFlight")
             {
                 Flight DDJB = new DDJBFlight(flightnum, origin, destination, datetime, "Scheduled", 300);
+                terminal.Flights[flightnum] = DDJB;
             }
             else if (requestcode == "LWTTFlight")
             {
                 Flight LWTT = new LWTTFlight(flightnum, origin, destination, datetime, "Scheduled", 500);
+                terminal.Flights[flightnum] = LWTT;
             }
             else
             {
                 Flight NORM = new NORMFlight(flightnum, origin, destination, "Scheduled", datetime);
-                airline.AddFlight(NORM);
-                terminal.Flights[split[0]] = NORM;
+                terminal.Flights[flightnum] = NORM;
             }
             Console.WriteLine("Flight {0} has been added!", flightnum);
         }
@@ -209,6 +234,31 @@ void createflight(Terminal terminal)
 }
 // qn9
 // find if flight number is in boarding gate, then it would put the boarding gate name instead otherwise it would put unassigned there
+void displayschedule(Terminal terminal)
+{
+    List<Flight> flightslist = terminal.Flights.Values.ToList();
+    flightslist.Sort();
+    Console.WriteLine("=============================================" + '\n' + "List of Flights for Changi Airport Terminal 5" + '\n' + "=============================================");
+    Console.WriteLine("{0,-18}{1,-22}{2,-22}{3,-23}{4,-25}{5,-20}{6,-20}", "Flight number", "Airline Name", "Origin", "Destination", "Expected Departure/Arrival Time","Status","Boarding Gate");
+    foreach (Flight flight in flightslist)
+    {
+        String[] split = flight.FlightNumber.Split(" ");
+        string gatenum = "unassigned";
+        foreach (var gatedata in terminal.boardingGates)
+        {
+            if (gatedata.Value.Flight != null && gatedata.Value.Flight.FlightNumber == flight.FlightNumber)
+            {
+                gatenum = gatedata.Value.gateName;
+            }
+        }
+        Console.WriteLine("{0,-18}{1,-22}{2,-22}{3,-23}{4,-25}{5,-26}{6,-20}", flight.FlightNumber, terminal.Airlines[split[0]].Name, flight.Origin, flight.Destination, flight.expectedTime, flight.Status, gatenum);
+    }
+}
+
+//advanced questions 
+// QN1 
+
+// QN2
 
 // running code for menu
 initairline(terminal);
@@ -254,7 +304,7 @@ while (true)
         }
         else if (option == 7)
         {
-
+            displayschedule(terminal);
         }
         else if (option == 0)
         {

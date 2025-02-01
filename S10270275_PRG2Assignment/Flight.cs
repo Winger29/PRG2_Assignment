@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace S10270275_PRG2Assignment
 {
-    abstract class Flight
+    abstract class Flight : IComparable<Flight>
     {
         private string flightnumber;
         private string origin;
@@ -14,9 +15,9 @@ namespace S10270275_PRG2Assignment
         private DateTime expectedtime;
         private string status;
 
-        public string FlightNumber 
-        { 
-            get { return flightnumber; } 
+        public string FlightNumber
+        {
+            get { return flightnumber; }
             set { flightnumber = value; }
         }
 
@@ -41,18 +42,23 @@ namespace S10270275_PRG2Assignment
         public string Status
         {
             get { return status; }
-            set { status = value; } 
+            set { status = value; }
         }
 
         public Flight(string Fnum, string Ori, string Dest, DateTime expectedtime, string status)
         {
             FlightNumber = Fnum;
             Origin = Ori;
-            Destination = Dest; 
+            Destination = Dest;
             expectedTime = expectedtime;
             Status = status;
         }
 
         public abstract double CalculateFees();
+
+        public int CompareTo(Flight flights)
+        {
+            return this.expectedTime.CompareTo(flights.expectedTime);
+        }
     }
 }

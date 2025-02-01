@@ -1,8 +1,8 @@
 ﻿using S10270275_PRG2Assignment;
 using System.Collections.Generic;
 
+
 Console.WriteLine("testing");
-Terminal terminal = new Terminal("Changi Terminal 5");
 // yuxuan qn1,4,7,8
 
 // qn1
@@ -24,7 +24,8 @@ Terminal terminal = new Terminal("Changi Terminal 5");
 //}
 // qn1 temp
 
-void initairline()
+Terminal terminal = new Terminal("Changi Terminal 5");
+void initairline(Terminal terminal)
 {
     foreach (string Line in File.ReadLines("airlines.csv").Skip(1))
     {
@@ -35,7 +36,7 @@ void initairline()
     }
 }
 
-void initboarding()
+void initboarding(Terminal terminal)
 {
     foreach (string Line in File.ReadLines("boardinggates.csv").Skip(1))
     {
@@ -46,34 +47,9 @@ void initboarding()
 }
 
 // qn2 
-void initflight()
+void initflight(Terminal terminal)
 {
-    foreach (string Line in File.ReadLines("flights.csv").Skip(1))
-    {
-        String[] split = Line.Split(",");
-        String[] numsplit = split[0].Split(" ");
-        Airline airline = terminal.Airlines[numsplit[0]];
-        if (split[4] == "DDJB")
-        {
-            Flight ftemp = new DDJBFlight(split[0], split[1], split[2], Convert.ToDateTime(split[3]), "Scheduled", 300);
-            terminal.Flights[split[0]] = ftemp;
-        }
-        else if (split[4] == "CFFT")
-        {
-            Flight ftemp = new CFFTFlight(split[0], split[1], split[2], Convert.ToDateTime(split[3]), "Scheduled", 150);
-            terminal.Flights[split[0]] = ftemp;
-        }
-        else if (split[4] == "LWTT")
-        {
-            Flight ftemp = new LWTTFlight(split[0], split[1], split[2], Convert.ToDateTime(split[3]), "Scheduled", 500);
-            terminal.Flights[split[0]] = ftemp;
-        }
-        else
-        {
-            Flight ftemp = new NORMFlight(split[0], split[1], split[2], "Scheduled", Convert.ToDateTime(split[3]));
-            terminal.Flights[split[0]] = ftemp;
-        }
-    }
+
 }
 
 
@@ -84,13 +60,8 @@ void initflight()
 //}
 
 // qn3 
-void displayflight()
+void displayflight(Terminal terminal)
 {
-    if (terminal.Flights.Count == 0)
-    {
-        Console.WriteLine("No flights available.");
-        return;
-    }
     Console.WriteLine("=============================================" + '\n' +"List of Flights for Changi Airport Terminal 5" + '\n' +"=============================================");
     Console.WriteLine("{0,-18}{1,-22}{2,-22}{3,-23}{4,-15}","Flight number","Airline Name","Origin","Destination","Expected Departure/Arrival Time");
     foreach (KeyValuePair<string, Flight> flightkvp in terminal.Flights)
@@ -100,9 +71,8 @@ void displayflight()
     }
 }
 // qn5
-void assigngate()
+void assigngate(Terminal terminal)
 {
-
     Console.Write("Enter Flight Number: ");
     string Flightnum = Console.ReadLine();
     Console.Write("Enter Boarding Gate Name: ");
@@ -185,23 +155,65 @@ void assigngate()
             Console.WriteLine("Flight {0} has been assigned to Boarding Gate {1}!", Flightnum, Boardingnum);
         }
     }
-    else
-    {
-        Console.WriteLine("Flight number does not exist or you have typed wrongly please retry again");
-    }
+
 }
 // qn6
-//void createflight(Dictionary<string, Flight> FlightDict)
-//{
-
-//}
+void createflight(Terminal terminal)
+{
+    List<string> flighttype = new List<string>() {"DDJB","CFFT","LWTT","None"};
+    try
+    {
+        Console.Write("Enter Flight Number: ");
+        string flightnum = Console.ReadLine();
+        Console.Write("Enter Origin: ");
+        string origin = Console.ReadLine();
+        Console.Write("Enter Destination: ");
+        string destination = Console.ReadLine();
+        Console.Write("Enter Expected Departure/Arrival Time (dd/mm/yyyy hh:mm): ");
+        DateTime datetime = DateTime.Parse(Console.ReadLine());
+        Console.Write("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
+        string requestcode = Console.ReadLine();
+        String[] split = flightnum.Split(" ");
+        Airline airline = terminal.Airlines[split[0]];
+        if (new[] { "DDJB", "CFFT", "LWTT", "NONE" }.Contains(requestcode.ToUpper()))
+        {
+            if (requestcode == "CFFT")
+            {
+                Flight CFFT = new CFFTFlight(flightnum, origin, destination, datetime, "Scheduled", 150);
+            }
+            else if (requestcode == "DDJBFlight")
+            {
+                Flight DDJB = new DDJBFlight(flightnum, origin, destination, datetime, "Scheduled", 300);
+            }
+            else if (requestcode == "LWTTFlight")
+            {
+                Flight LWTT = new LWTTFlight(flightnum, origin, destination, datetime, "Scheduled", 500);
+            }
+            else
+            {
+                Flight NORM = new NORMFlight(flightnum, origin, destination, "Scheduled", datetime);
+                airline.AddFlight(NORM);
+                terminal.Flights[split[0]] = NORM;
+            }
+            Console.WriteLine("Flight {0} has been added!", flightnum);
+        }
+        else
+        {
+            Console.WriteLine("Invalid option, please choose one of these 4 CFFT/DDJB/LWTT/None");
+        }
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine("Error: "+ e.Message);
+    }
+}
 // qn9
-
+// find if flight number is in boarding gate, then it would put the boarding gate name instead otherwise it would put unassigned there
 
 // running code for menu
-initairline();
-initboarding();
-initflight();
+initairline(terminal);
+initboarding(terminal);
+initflight(terminal);
 void displaymenu()
 {
     Console.WriteLine("=============================================" + '\n' + "Welcome to Changi Airport Terminal 5" + '\n' + "=============================================" + '\n' + "1. List All Flights" + '\n' + "2. List Boarding Gates" + '\n' + "3. Assign a Boarding Gate to a Flight" + '\n' +"4. Create Flight" + '\n' +"5. Display Airline Flights" + '\n' +"6. Modify Flight Details"+'\n'+"7. Display Flight Schedule"+'\n'+"0. Exit" + '\n');
@@ -218,19 +230,44 @@ while (true)
         int option = Convert.ToInt32(Console.ReadLine());
         if (option == 1)
         {
-            displayflight();
+            displayflight(terminal);
+        }
+        else if (option == 2)
+        {
+
         }
         else if (option == 3)
         {
-            assigngate();
+            assigngate(terminal);
+        }
+        else if (option == 4)
+        {
+            createflight(terminal);
+        }
+        else if (option == 5)
+        {
+
+        }
+        else if (option == 6)
+        {
+
+        }
+        else if (option == 7)
+        {
+
         }
         else if (option == 0)
         {
             return;
         }
+        else
+        {
+            Console.WriteLine("Invalid option, please write the number of the above options");
+        }
     }
     catch (Exception e)
     {
-        Console.WriteLine(e.Message);
+        Console.WriteLine("Error: " +e.Message);
     }
 }
+

@@ -10,7 +10,6 @@ namespace S10270275_PRG2Assignment
     {
         private string name;
         private string code;
-        private Dictionary<string, Flight> flights;
 
         public string Name
         {

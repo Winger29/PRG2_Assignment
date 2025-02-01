@@ -29,8 +29,15 @@ namespace S10270275_PRG2Assignment
 
         public bool AddAirline(Airline airline)
         {
-            Airlines[airline.Code] = airline;
-            return true;
+            if (Airlines.ContainsKey(airline.Name))
+            {
+                return false;
+            }
+            else
+            {
+                Airlines[airline.Code] = airline;
+                return true;
+            }
         }
 
         public bool AddBoardingGate(BoardingGate boardinggate)

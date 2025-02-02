@@ -1,8 +1,10 @@
 ﻿using S10270275_PRG2Assignment;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 
 Console.WriteLine("testing");
+Terminal terminal = new Terminal("Changi Terminal 5");
 // yuxuan qn1,4,7,8
 
 // qn1
@@ -153,8 +155,6 @@ public void ModifyFlightDetails()
 //    String[] split = Line.Split(",");
 //}
 // qn1 temp
-
-Terminal terminal = new Terminal("Changi Terminal 5");
 void initairline(Terminal terminal)
 {
     foreach (string Line in File.ReadLines("airlines.csv").Skip(1))
@@ -171,7 +171,7 @@ void initboarding(Terminal terminal)
     foreach (string Line in File.ReadLines("boardinggates.csv").Skip(1))
     {
         String[] split = Line.Split(",");
-        BoardingGate boarding = new BoardingGate(null, split[0], Convert.ToBoolean(split[1]), Convert.ToBoolean(split[2]), Convert.ToBoolean(split[3]));
+        BoardingGate boarding = new BoardingGate(null, split[0], Convert.ToBoolean(split[2]), Convert.ToBoolean(split[1]), Convert.ToBoolean(split[3]));
         terminal.AddBoardingGate(boarding);
     }
 }
@@ -187,21 +187,25 @@ void initflight(Terminal terminal)
         if (split[4] == "DDJB")
         {
             Flight ftemp = new DDJBFlight(split[0], split[1], split[2], Convert.ToDateTime(split[3]), "Scheduled", 300);
+            airline.AddFlight(ftemp);
             terminal.Flights[split[0]] = ftemp;
         }
         else if (split[4] == "CFFT")
         {
             Flight ftemp = new CFFTFlight(split[0], split[1], split[2], Convert.ToDateTime(split[3]), "Scheduled", 150);
+            airline.AddFlight(ftemp);
             terminal.Flights[split[0]] = ftemp;
         }
         else if (split[4] == "LWTT")
         {
             Flight ftemp = new LWTTFlight(split[0], split[1], split[2], Convert.ToDateTime(split[3]), "Scheduled", 500);
+            airline.AddFlight(ftemp);
             terminal.Flights[split[0]] = ftemp;
         }
         else
         {
             Flight ftemp = new NORMFlight(split[0], split[1], split[2], "Scheduled", Convert.ToDateTime(split[3]));
+            airline.AddFlight(ftemp);
             terminal.Flights[split[0]] = ftemp;
         }
     }
@@ -233,23 +237,23 @@ void assigngate(Terminal terminal)
     Console.Write("Enter Boarding Gate Name: ");
     string Boardingnum = Console.ReadLine();
 
-    if (terminal.Flights.ContainsKey(Flightnum) & (terminal.boardingGates.ContainsKey(Boardingnum.ToUpper())))
+    if (terminal.Flights.ContainsKey(Flightnum.ToUpper()) & (terminal.boardingGates.ContainsKey(Boardingnum.ToUpper())))
     {
         Console.WriteLine("Flight Number: {0}", terminal.Flights[Flightnum].FlightNumber);
         Console.WriteLine("Origin: {0}", terminal.Flights[Flightnum].Origin);
         Console.WriteLine("Expected Time: {0}", terminal.Flights[Flightnum].expectedTime);
         Console.WriteLine(Convert.ToString(terminal.Flights[Flightnum].GetType()));
-        string type = Convert.ToString(terminal.Flights[Flightnum].GetType());
+        string type = Convert.ToString(terminal.Flights[Flightnum].GetType().Namespace);
         string[] typesplit = type.Split(".");
-        if (typesplit[1] == "CFFTFlight")
+        if (terminal.Flights[Flightnum].GetType().Namespace == "CFFTFlight")
         {
             Console.WriteLine("Special Request Code: {0}", "CFFT");
         }
-        else if (typesplit[1] == "DDJBFlight")
+        else if (terminal.Flights[Flightnum].GetType().Namespace == "DDJBFlight")
         {
             Console.WriteLine("Special Request Code: {0}", "DDJB");
         }
-        else if (typesplit[1] == "LWTTFlight")
+        else if (terminal.Flights[Flightnum].GetType().Namespace == "LWTTFlight")
         {
             Console.WriteLine("Special Request Code: {0}", "LWTT");
         }
@@ -270,15 +274,15 @@ void assigngate(Terminal terminal)
             Console.Write("Please select the new status of the flight: ");
             int statusoption = Convert.ToInt32(Console.ReadLine());
             terminal.Flights[Flightnum].Status = statuslist[statusoption - 1];
-            if (typesplit[1] == "CFFTFlight")
+            if (terminal.Flights[Flightnum].GetType().Namespace == "CFFTFlight")
             {
                 terminal.boardingGates[Boardingnum].Flight = new CFFTFlight(Flightnum, terminal.Flights[Flightnum].Origin, terminal.Flights[Flightnum].Destination, terminal.Flights[Flightnum].expectedTime, statuslist[statusoption -1], 150);
             }
-            else if (typesplit[1] == "DDJBFlight")
+            else if (terminal.Flights[Flightnum].GetType().Namespace == "DDJBFlight")
             {
                 terminal.boardingGates[Boardingnum].Flight = new DDJBFlight(Flightnum, terminal.Flights[Flightnum].Origin, terminal.Flights[Flightnum].Destination, terminal.Flights[Flightnum].expectedTime, statuslist[statusoption - 1], 300);
             }
-            else if (typesplit[1] == "LWTTFlight")
+            else if (terminal.Flights[Flightnum].GetType().Namespace == "LWTTFlight")
             {
                 terminal.boardingGates[Boardingnum].Flight = new LWTTFlight(Flightnum, terminal.Flights[Flightnum].Origin, terminal.Flights[Flightnum].Destination, terminal.Flights[Flightnum].expectedTime, statuslist[statusoption - 1], 500);
             }
@@ -289,15 +293,15 @@ void assigngate(Terminal terminal)
         }
         else if (option == "N")
         {
-            if (typesplit[1] == "CFFTFlight")
+            if (terminal.Flights[Flightnum].GetType().Namespace == "CFFTFlight")
             {
                 terminal.boardingGates[Boardingnum].Flight = new CFFTFlight(Flightnum, terminal.Flights[Flightnum].Origin, terminal.Flights[Flightnum].Destination, terminal.Flights[Flightnum].expectedTime, terminal.Flights[Flightnum].Status, 150);
             }
-            else if (typesplit[1] == "DDJBFlight")
+            else if (terminal.Flights[Flightnum].GetType().Namespace == "DDJBFlight")
             {
                 terminal.boardingGates[Boardingnum].Flight = new DDJBFlight(Flightnum, terminal.Flights[Flightnum].Origin, terminal.Flights[Flightnum].Destination, terminal.Flights[Flightnum].expectedTime, terminal.Flights[Flightnum].Status, 300);
             }
-            else if (typesplit[1] == "LWTTFlight")
+            else if (terminal.Flights[Flightnum].GetType().Namespace == "LWTTFlight")
             {
                 terminal.boardingGates[Boardingnum].Flight = new LWTTFlight(Flightnum, terminal.Flights[Flightnum].Origin, terminal.Flights[Flightnum].Destination, terminal.Flights[Flightnum].expectedTime, terminal.Flights[Flightnum].Status, 500);
             }
@@ -308,12 +312,15 @@ void assigngate(Terminal terminal)
         }
         Console.WriteLine("Flight {0} has been assigned to Boarding Gate {1}!", Flightnum, Boardingnum);
     }
+    else
+    {
+        Console.WriteLine("Error: wrong gate or wrong plane number, please retry again");
+    }
 
 }
 // qn6
 void createflight(Terminal terminal)
 {
-    List<string> flighttype = new List<string>() {"DDJB","CFFT","LWTT","None"};
     try
     {
         Console.Write("Enter Flight Number: ");
@@ -328,33 +335,40 @@ void createflight(Terminal terminal)
         string requestcode = Console.ReadLine();
         String[] split = flightnum.Split(" ");
         Airline airline = terminal.Airlines[split[0]];
-        if (new[] { "DDJB", "CFFT", "LWTT", "NONE" }.Contains(requestcode.ToUpper()))
+        while (true)
         {
-            if (requestcode == "CFFT")
+            if (new[] { "DDJB", "CFFT", "LWTT", "NONE" }.Contains(requestcode.ToUpper()))
             {
-                Flight CFFT = new CFFTFlight(flightnum, origin, destination, datetime, "Scheduled", 150);
-                terminal.Flights[flightnum] = CFFT;
-            }
-            else if (requestcode == "DDJBFlight")
-            {
-                Flight DDJB = new DDJBFlight(flightnum, origin, destination, datetime, "Scheduled", 300);
-                terminal.Flights[flightnum] = DDJB;
-            }
-            else if (requestcode == "LWTTFlight")
-            {
-                Flight LWTT = new LWTTFlight(flightnum, origin, destination, datetime, "Scheduled", 500);
-                terminal.Flights[flightnum] = LWTT;
+                if (requestcode == "CFFT")
+                {
+                    Flight CFFT = new CFFTFlight(flightnum, origin, destination, datetime, "Scheduled", 150);
+                    terminal.Flights[flightnum] = CFFT;
+                }
+                else if (requestcode == "DDJBFlight")
+                {
+                    Flight DDJB = new DDJBFlight(flightnum, origin, destination, datetime, "Scheduled", 300);
+                    terminal.Flights[flightnum] = DDJB;
+                }
+                else if (requestcode == "LWTTFlight")
+                {
+                    Flight LWTT = new LWTTFlight(flightnum, origin, destination, datetime, "Scheduled", 500);
+                    terminal.Flights[flightnum] = LWTT;
+                }
+                else
+                {
+                    Flight NORM = new NORMFlight(flightnum, origin, destination, "Scheduled", datetime);
+                    terminal.Flights[flightnum] = NORM;
+                }
+                Console.WriteLine("Flight {0} has been added!", flightnum);
+                return;
             }
             else
             {
-                Flight NORM = new NORMFlight(flightnum, origin, destination, "Scheduled", datetime);
-                terminal.Flights[flightnum] = NORM;
+                Console.WriteLine("Invalid option, please choose one of these 4 CFFT/DDJB/LWTT/None");
+                Console.Write("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
+                requestcode = Console.ReadLine();
+
             }
-            Console.WriteLine("Flight {0} has been added!", flightnum);
-        }
-        else
-        {
-            Console.WriteLine("Invalid option, please choose one of these 4 CFFT/DDJB/LWTT/None");
         }
     }
     catch (Exception e)
@@ -387,9 +401,159 @@ void displayschedule(Terminal terminal)
 
 //advanced questions 
 // QN1 
+void Processunassigned(Terminal terminal)
+{
+    foreach (var gates in terminal.boardingGates.Values)
+    {
+        Console.WriteLine("Gate: {0}", gates.gateName);
+        Console.WriteLine("Supports CFFT: {0}", gates.supportsCFFT);
+        Console.WriteLine("Supports LWTT: {0}", gates.supportsLWTT);
+        Console.WriteLine("Supports DDJB: {0}", gates.supportsDDJB);
+        Console.WriteLine("Flight Assigned: {0}", gates.Flight != null ? gates.Flight.FlightNumber : "None");
+        Console.WriteLine("--------------------------------------");
+    }
+    Queue<Flight> unassignedflight = new Queue<Flight>();
+    foreach (var flight in terminal.Flights.Values)
+    {
+        bool isassigned = false;
+        foreach (var gates in terminal.boardingGates.Values)
+        {
+            if (gates.Flight != null && gates.Flight.FlightNumber == flight.FlightNumber)
+            {
+                isassigned = true;
+                break;
+            }
+        }
+        if (isassigned == false)
+        {
+            unassignedflight.Enqueue(flight);
+            Console.WriteLine(flight.FlightNumber + "has been queued");
+        }
+    }
+    Console.WriteLine("The total number of unassigned planes are: {0}", unassignedflight.Count());
+// goes through the list of queued flights and checks its code against the gates with the code and adds it to the gate it breaks to keep resetting to prevent same flight to take the other gates
+    while (unassignedflight.Count() > 0)
+    {
+        Flight dequed = unassignedflight.Dequeue();
+        if (dequed.GetType().Name != "NORMFlight")
+        {
+            if (dequed.GetType().Name == "CFFTFlight")
+            {
+                foreach (var gates in terminal.boardingGates.Values)
+                {
+                    if (gates.supportsCFFT == true && gates.Flight == null)
+                    {
+                        gates.Flight = dequed;
+                        break;
+                    }
+                }
+            }
+            else if (dequed.GetType().Name == "LWTTFlight")
+            {
+                foreach (var gates in terminal.boardingGates.Values)
+                {
+                    if (gates.supportsLWTT == true && gates.Flight == null)
+                    {
+                        gates.Flight = dequed;
+                        break;
+                    }
+                }
+            }
+            else if (dequed.GetType().Name == "DDJBFlight")
+            {
+                foreach (var gates in terminal.boardingGates.Values)
+                {
+                    if (gates.supportsDDJB == true && gates.Flight == null)
+                    {
+                        gates.Flight = dequed;
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            foreach (var gates in terminal.boardingGates.Values)
+            {
+                if (gates.supportsDDJB == false && gates.supportsCFFT == false && gates.supportsLWTT == false && gates.Flight == null)
+                {
+                    gates.Flight = dequed;
+                    Console.WriteLine("Assigned flight {0} to gate {1}", dequed.FlightNumber, gates.gateName);
+                    break;
+                }
+            }
+        }
+    }
+    Console.WriteLine("=============================================" + '\n' + "List of Flights for Changi Airport Terminal 5" + '\n' + "=============================================");
+    Console.WriteLine("{0,-18}{1,-22}{2,-22}{3,-23}{4,-25}{5,-20}{6,-20}", "Flight number", "Airline Name", "Origin", "Destination", "Expected Departure/Arrival Time", "Status", "Boarding Gate");
+    foreach (var flight in terminal.Flights)
+    {
+        string gatenum = null;
+        foreach (var gatedata in terminal.boardingGates)
+        {
+            if (gatedata.Value.Flight != null && gatedata.Value.Flight.FlightNumber == flight.Value.FlightNumber)
+            {
+                gatenum = gatedata.Value.gateName;
+            }
+        }
+        Console.WriteLine("{0,-18}{1,-22}{2,-22}{3,-23}{4,-25}{5,-26}{6,-20}{7}", flight.Value.FlightNumber, terminal.Airlines[flight.Value.FlightNumber.Split(" ") [0]].Name, flight.Value.Origin, flight.Value.Destination, flight.Value.expectedTime, flight.Value.Status,gatenum,flight.Value.GetType().Name);
+    }
+}
+
 
 // QN2
-
+void airlinecost(Terminal terminal)
+{
+    foreach (var airline in terminal.Airlines.Values)
+    {
+        double total = 0;
+        foreach (var flight in terminal.Flights.Values)
+        {
+            Console.WriteLine(flight.FlightNumber);
+            if (flight.FlightNumber.Split(" ")[0] == airline.Code)
+            {
+                Console.WriteLine($"Flight {flight.FlightNumber} matches airline {airline.Code}");
+                Console.WriteLine("Number of flights: " + terminal.Flights.Values.Count());
+                if (flight.Origin == "Singapore (SIN)")
+                {
+                    Console.WriteLine(flight.FlightNumber);
+                    total += 800;
+                }
+                else if (flight.Destination == "Singapore (SIN)")
+                {
+                    Console.WriteLine(flight.FlightNumber);
+                    total += 500;
+                }
+                
+                if (flight.GetType().Name == "CFFTFlight")
+                {
+                    Console.WriteLine(flight.FlightNumber);
+                    CFFTFlight CFFT = (CFFTFlight)flight;
+                    total += 400;
+                }
+                else if (flight.GetType().Name == "LWTTFlight")
+                {
+                    Console.WriteLine(flight.FlightNumber);
+                    LWTTFlight LWTT = (LWTTFlight)flight;
+                    total += 800;
+                }
+                else if (flight.GetType().Name == "DDJBFlight")
+                {
+                    Console.WriteLine(flight.FlightNumber);
+                    DDJBFlight DDJB = (DDJBFlight)flight;
+                    total += 600;
+                }
+                else if (flight.GetType().Name == "NORMFlight")
+                {
+                    Console.WriteLine(flight.FlightNumber);
+                    NORMFlight NORM = (NORMFlight)flight;
+                    total += 300;
+                }
+            }
+        }
+        Console.WriteLine("{0} total cost is: ",airline.Name,total);
+    }
+}
 // running code for menu
 initairline(terminal);
 initboarding(terminal);
@@ -436,8 +600,17 @@ while (true)
         {
             displayschedule(terminal);
         }
+        else if (option == 8)
+        {
+            Processunassigned(terminal);
+        }
+        else if (option == 9)
+        {
+            airlinecost(terminal);
+        }
         else if (option == 0)
         {
+            Console.WriteLine("Goodbye");
             return;
         }
         else
@@ -447,7 +620,8 @@ while (true)
     }
     catch (Exception e)
     {
-        Console.WriteLine("Error: " +e.Message);
+        Console.WriteLine("Error: " + e.Message);
     }
 }
+
 

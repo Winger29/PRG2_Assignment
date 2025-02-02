@@ -1,5 +1,6 @@
 ﻿using S10270275_PRG2Assignment;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 
 
@@ -507,53 +508,77 @@ void airlinecost(Terminal terminal)
     foreach (var airline in terminal.Airlines.Values)
     {
         double total = 0;
+        double discount = 0;
+        double flightdiscount = 0;
+        int count = 0;
         foreach (var flight in terminal.Flights.Values)
         {
-            Console.WriteLine(flight.FlightNumber);
             if (flight.FlightNumber.Split(" ")[0] == airline.Code)
             {
-                Console.WriteLine($"Flight {flight.FlightNumber} matches airline {airline.Code}");
-                Console.WriteLine("Number of flights: " + terminal.Flights.Values.Count());
+                count++;
                 if (flight.Origin == "Singapore (SIN)")
                 {
-                    Console.WriteLine(flight.FlightNumber);
                     total += 800;
                 }
                 else if (flight.Destination == "Singapore (SIN)")
                 {
-                    Console.WriteLine(flight.FlightNumber);
                     total += 500;
                 }
-                
+                if (flight.Origin == "Dubai (DXB)" | flight.Origin == "Bangkok (BKK)" | flight.Origin == "Tokyo (NRT)")
+                {
+                    discount += 25;
+                }
+                if (flight.expectedTime.Hour > 21 && flight.expectedTime.Hour < 9)
+                {
+                    discount += 110;
+                }
+
+                if (flight.GetType().Name == "NORMFlight")
+                {
+                    discount += 50;
+                }
+
                 if (flight.GetType().Name == "CFFTFlight")
                 {
-                    Console.WriteLine(flight.FlightNumber);
                     CFFTFlight CFFT = (CFFTFlight)flight;
-                    total += 400;
+                    total += CFFT.CalculateFees();
                 }
                 else if (flight.GetType().Name == "LWTTFlight")
                 {
-                    Console.WriteLine(flight.FlightNumber);
                     LWTTFlight LWTT = (LWTTFlight)flight;
-                    total += 800;
+                    total += LWTT.CalculateFees();
                 }
                 else if (flight.GetType().Name == "DDJBFlight")
                 {
-                    Console.WriteLine(flight.FlightNumber);
                     DDJBFlight DDJB = (DDJBFlight)flight;
-                    total += 600;
+                    total += DDJB.CalculateFees();
                 }
                 else if (flight.GetType().Name == "NORMFlight")
                 {
-                    Console.WriteLine(flight.FlightNumber);
                     NORMFlight NORM = (NORMFlight)flight;
-                    total += 300;
+                    total += NORM.CalculateFees();
                 }
             }
+
         }
-        Console.WriteLine("{0} total cost is: ",airline.Name,total);
+        if (count > 3)
+        {
+            int group = count / 3;
+            discount += group * 350;
+        }
+        if (count > 7)
+        {
+            total = total * 0.97;
+            Console.WriteLine("=============================================" + '\n' + "Total Cost" + $"Airline: {airline.Name}" + '\n' + $"total cost before discount: {total}" + '\n' + $"total discount: {discount}" + '\n' + $"total after discount: {total - discount}");
+        }
+        else
+        {
+            Console.WriteLine("=============================================" + '\n' + "Total Cost" + $"Airline: {airline.Name}" + '\n' + $"total cost before discount: {total}" + '\n' + $"total discount: {discount}" + '\n' + $"total after discount: {total - discount}");
+        }
     }
+        
 }
+
 // running code for menu
 initairline(terminal);
 initboarding(terminal);
